@@ -1,6 +1,6 @@
 
 def solve_tsp():
-    points = []
+    pass
 
 def main():
     solve_tsp()
