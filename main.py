@@ -1,16 +1,47 @@
 import numpy as np
+import imageio
+import os
+import natsort
 
-from code.utils import create_gdf_from_names, get_basemap_params_from_gdf, create_distance_matrix
+from code.utils import (
+    create_gdf_from_names,
+    create_distance_matrix,
+)
+from code.tsp import TSPGeneticAlgo
 
-def solve_tsp(distance_matrix, algorithm = None):
-    
 
+def create_gif(output_path: str):
+    filenames = natsort.natsorted(os.listdir(output_path))
+    print(filenames)
+    images = []
+    for filename in filenames:
+        images.append(imageio.imread(os.path.join(output_path, filename)))
+    imageio.mimsave(os.path.join(output_path, "animation.gif"), images)
+
+
+def solve_tsp(distance_matrix, gdf, points, output_path: str, algorithm=None):
     print(distance_matrix)
 
+    solver = TSPGeneticAlgo(
+        distance_matrix, points, gdf, 30, 50, 0.1, 0.05, output_path
+    )
+    solver.run_evolution()
 
 
 def get_city_names():
-    return ["magdeburg", "berlin", "rostock", "kopenhagen", "madrid"]
+    return [
+        "magdeburg",
+        "berlin",
+        "rostock",
+        "rom",
+        "madrid",
+        "dortmund",
+        "münchen",
+        "wien",
+        "paris",
+        "london",
+        "prag",
+    ]
 
 
 def preprocess_cities(cities: list[str]):
@@ -18,14 +49,18 @@ def preprocess_cities(cities: list[str]):
     gdf = create_gdf_from_names(cities)
     points = np.column_stack((np.array(gdf.lon.tolist()), np.array(gdf.lat.tolist())))
 
-
     distance_matrix = create_distance_matrix(points)
-    return distance_matrix
+    return distance_matrix, points, gdf
+
 
 def main():
+    output_path = "output"
     cities = get_city_names()
-    distance_matrix = preprocess_cities(cities)
-    solve_tsp(distance_matrix)
+    distance_matrix, points, gdf = preprocess_cities(cities)
+    solve_tsp(distance_matrix, gdf, points, output_path)
+
+    create_gif(output_path)
+
 
 if __name__ == "__main__":
     main()
