@@ -20,12 +20,16 @@ def create_gif(output_path: str):
 
 
 def solve_tsp(distance_matrix, gdf, points, output_path: str, algorithm=None):
-    print(distance_matrix)
-
-    solver = TSPGeneticAlgo(
-        distance_matrix, points, gdf, 30, 50, 0.1, 0.05, output_path
-    )
-    solver.run_evolution()
+    if algorithm == "genetic_algo":
+        solver = TSPGeneticAlgo(
+            distance_matrix, points, gdf, 10, 50, 0.1, 0.05, output_path
+        )
+        solver.run_evolution()
+    elif algorithm == "symmetric":
+        # paul
+        pass
+    else:
+        raise NotImplementedError(f"Not yet implemented {algorithm}")
 
 
 def get_city_names():
@@ -57,7 +61,8 @@ def main():
     output_path = "output"
     cities = get_city_names()
     distance_matrix, points, gdf = preprocess_cities(cities)
-    solve_tsp(distance_matrix, gdf, points, output_path)
+
+    solve_tsp(distance_matrix, gdf, points, output_path, algorithm="genetic_algo")
 
     create_gif(output_path)
 

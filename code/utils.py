@@ -21,7 +21,7 @@ def get_coordinates_from_name(city_string: str):
     return lon, lat
 
 
-def create_gdf_from_names(city_names: list[str]):
+def create_gdf_from_names(city_names: list[str]) -> gpd.GeoDataFrame:
     data = []
     for city in city_names:
         coords = get_coordinates_from_name(city)
